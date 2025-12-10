@@ -140,8 +140,8 @@ RUN curl -fsSL -o /opt/spark/jars/iceberg-spark-runtime-3.5_2.12-${ICEBERG_VERSI
 
 # Drop privileges (Spark base image includes non-root user 185)
 USER 185
-
-ENTRYPOINT ["python3"]
+ENTRYPOINT ["tail", "-f", "/dev/null"]
+#ENTRYPOINT ["python3"]
 
 # Default command for connector container
 #CMD ["python3", "main.py"]

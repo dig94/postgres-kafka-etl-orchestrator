@@ -1,24 +1,28 @@
 version: "3.8"
 
-# x-airflow-common: &airflow-common
-#   image: apache/airflow:2.9.3-python3.10
-#   environment: &airflow-common-env
-#     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-#     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-#     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@airflow-postgres/airflow
-#     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
-#     AIRFLOW__CORE__FERNET_KEY: ''
-#     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-#     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-#   volumes:
-#     - ./airflow/dags:/opt/airflow/dags
-#     - ./airflow/logs:/opt/airflow/logs
-#     - ./airflow/plugins:/opt/airflow/plugins
-#   depends_on:
-#     redis:
-#       condition: service_healthy
-#     airflow-postgres:
-#       condition: service_healthy
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.9.3-python3.10
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@airflow-postgres/airflow
+    AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    #_PIP_ADDITIONAL_REQUIREMENTS: "apache-airflow-providers-trino"
+  volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+
+ # user: "${AIRFLOW_UID:-50000}"
+  user: "0:0"
+  depends_on:
+    redis:
+      condition: service_healthy
+    airflow-postgres:
+      condition: service_healthy
 
 services:
   # ---------------------------------------------------------------------------
@@ -66,20 +70,20 @@ services:
     ports:
       - "5433:5432"
 
-  # airflow-postgres:
-  #   image: postgres:13
-  #   container_name: airflow_db
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: airflow
-  #     POSTGRES_PASSWORD: airflow
-  #     POSTGRES_DB: airflow
-  #   healthcheck:
-  #     test: ["CMD", "pg_isready", "-U", "airflow"]
-  #     interval: 10s
-  #     retries: 5
-  #   volumes:
-  #     - airflow-db-volume:/var/lib/postgresql/data
+  airflow-postgres:
+    image: postgres:13
+    container_name: airflow_db
+    restart: always
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+    volumes:
+      - airflow-db-volume:/var/lib/postgresql/data
 
   redis:
     image: redis:7.2-bookworm
@@ -96,46 +100,67 @@ services:
   # ---------------------------------------------------------------------------
   # AIRFLOW COMPONENTS
   # ---------------------------------------------------------------------------
-  # airflow-webserver:
-  #   <<: *airflow-common
-  #   container_name: airflow-webserver
-  #   command: webserver
-  #   ports: ["8080:8080"]
-  #   depends_on:
-  #     - airflow-init
+  airflow-webserver:
+    <<: *airflow-common
+    container_name: airflow-webserver
+    command: webserver
+    ports: ["8090:8080"]
+    volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - airflow-init
 
-  # airflow-scheduler:
-  #   <<: *airflow-common
-  #   container_name: airflow-scheduler
-  #   command: scheduler
-  #   depends_on:
-  #     - airflow-init
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: scheduler
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+    volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
 
-  # airflow-worker:
-  #   <<: *airflow-common
-  #   container_name: airflow-worker
-  #   command: celery worker
-  #   depends_on:
-  #     - airflow-init
+  airflow-worker:
+    <<: *airflow-common
+    container_name: airflow-worker
+    command: celery worker
+    depends_on:
+      - airflow-init
+    volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
 
-  # airflow-triggerer:
-  #   <<: *airflow-common
-  #   container_name: airflow-triggerer
-  #   command: triggerer
-  #   depends_on:
-  #     - airflow-init
+  airflow-triggerer:
+    <<: *airflow-common
+    container_name: airflow-triggerer
+    command: triggerer
+    depends_on:
+      - airflow-init
+    volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/logs:/opt/airflow/logs
+    - ./airflow/plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock
 
-  # airflow-init:
-  #   <<: *airflow-common
-  #   container_name: airflow-init
-  #   entrypoint: /bin/bash
-  #   command:
-  #     - -c
-  #     - |
-  #       airflow db init
-  #       airflow users create --username admin --password admin \
-  #         --firstname A --lastname U --role Admin --email admin@example.com
-  #   user: "0:0"
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db init
+        airflow users create --username admin --password admin \
+          --firstname A --lastname U --role Admin --email admin@example.com
+    user: "0:0"
 
   # ---------------------------------------------------------------------------
   # CONNECTOR SERVICE
@@ -165,7 +190,8 @@ services:
       - postgres
       - kafka
       - redis
-    command: ["main.py"]
+    #command: ["main.py"]
+    #command: ["tail", "-f", "/dev/null"]
     # volumes:
     #   - ./spark-jars:/opt/spark/jars
   
@@ -194,7 +220,8 @@ services:
       - iceberg-postgres
     #entrypoint: ["python3"]
     #command: ["python3","-u","loader/kafka_consumer.py"]
-    command: ["-u","loader/kafka_consumer.py"]
+    #command: ["-u","loader/kafka_consumer.py"]
+    #command: ["tail", "-f", "/dev/null"]
     
     # volumes:
     #   - ./spark-jars:/opt/spark/jars
@@ -244,5 +271,5 @@ services:
 
 volumes:
   kafka-data:
-  #airflow-db-volume:
+  airflow-db-volume:
   minio_data:

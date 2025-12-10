@@ -66,6 +66,5 @@ def start_loader_consumer():
         print("👋 Loader Consumer shutdown complete.")
 
 
-# THIS WAS MISSING
 if __name__ == "__main__":
     start_loader_consumer()

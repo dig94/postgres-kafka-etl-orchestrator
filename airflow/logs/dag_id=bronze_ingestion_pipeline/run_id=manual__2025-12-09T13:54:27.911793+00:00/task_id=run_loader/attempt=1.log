@@ -1,0 +1,66 @@
+[2025-12-09T13:57:03.542+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-09T13:57:03.576+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_ingestion_pipeline.run_loader manual__2025-12-09T13:54:27.911793+00:00 [queued]>
+[2025-12-09T13:57:03.589+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_ingestion_pipeline.run_loader manual__2025-12-09T13:54:27.911793+00:00 [queued]>
+[2025-12-09T13:57:03.590+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 2
+[2025-12-09T13:57:03.610+0000] {taskinstance.py:2330} INFO - Executing <Task(BashOperator): run_loader> on 2025-12-09 13:54:27.911793+00:00
+[2025-12-09T13:57:03.619+0000] {standard_task_runner.py:64} INFO - Started process 57 to run task
+[2025-12-09T13:57:03.626+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_ingestion_pipeline', 'run_loader', 'manual__2025-12-09T13:54:27.911793+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/ingestion_dag.py', '--cfg-path', '/tmp/tmpamagsbpd']
+[2025-12-09T13:57:03.628+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask run_loader
+[2025-12-09T13:57:03.704+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_ingestion_pipeline.run_loader manual__2025-12-09T13:54:27.911793+00:00 [running]> on host c549e5223045
+[2025-12-09T13:57:03.816+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='bronze_ingestion_pipeline' AIRFLOW_CTX_TASK_ID='run_loader' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T13:54:27.911793+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-12-09T13:54:27.911793+00:00'
+[2025-12-09T13:57:03.818+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-09T13:57:03.835+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-12-09T13:57:03.836+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'docker exec loader_service python3 /app/loader/kafka_consumer.py']
+[2025-12-09T13:57:03.852+0000] {subprocess.py:86} INFO - Output:
+[2025-12-09T13:57:04.257+0000] {subprocess.py:93} INFO - 🔄 Starting Loader Kafka Consumer...
+[2025-12-09T13:57:07.696+0000] {subprocess.py:93} INFO - Setting default log level to "WARN".
+[2025-12-09T13:57:07.696+0000] {subprocess.py:93} INFO - To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+[2025-12-09T13:57:08.032+0000] {subprocess.py:93} INFO - 25/12/09 13:57:08 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2025-12-09T13:57:10.347+0000] {subprocess.py:93} INFO - 📡 Subscribed to Kafka topic: extract_queue
+[2025-12-09T13:57:13.608+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'employees', 'raw_path': 's3a://raw/postgres/employees/', 'status': 'raw_written'}
+[2025-12-09T13:57:13.610+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/employees/
+[2025-12-09T13:57:15.426+0000] {subprocess.py:93} INFO - 25/12/09 13:57:15 WARN MetricsConfig: Cannot locate configuration: tried hadoop-metrics2-s3a-file-system.properties,hadoop-metrics2.properties
+[2025-12-09T13:57:20.545+0000] {subprocess.py:93} INFO - [Stage 0:>                                                          (0 + 1) / 1]                                                                                [LOADER] Writing into Iceberg table: iceberg.default.employees
+[2025-12-09T13:57:21.055+0000] {subprocess.py:93} INFO - 25/12/09 13:57:21 WARN JdbcCatalog: JDBC catalog is initialized without view support. To auto-migrate the database's schema and enable view support, set jdbc.schema-version=V1
+[2025-12-09T13:57:28.362+0000] {subprocess.py:93} INFO - [Stage 1:>                                                          (0 + 4) / 4]                                                                                [LOADER] ✔ Successfully loaded 150 rows into iceberg.default.employees
+[2025-12-09T13:57:28.369+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'employees_3', 'raw_path': 's3a://raw/postgres/employees_3/', 'status': 'raw_written'}
+[2025-12-09T13:57:28.372+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/employees_3/
+[2025-12-09T13:57:28.716+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.employees_3
+[2025-12-09T13:57:35.325+0000] {subprocess.py:93} INFO - [Stage 6:>                                                          (0 + 4) / 4][Stage 6:=============================>                             (2 + 2) / 4]                                                                                [LOADER] ✔ Successfully loaded 1000000 rows into iceberg.default.employees_3
+[2025-12-09T13:57:35.326+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'employees_4', 'raw_path': 's3a://raw/postgres/employees_4/', 'status': 'raw_written'}
+[2025-12-09T13:57:35.326+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/employees_4/
+[2025-12-09T13:57:35.561+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.employees_4
+[2025-12-09T13:57:45.720+0000] {subprocess.py:93} INFO - [Stage 11:>                                                         (0 + 4) / 4][Stage 11:==============>                                           (1 + 3) / 4][Stage 11:=============================>                            (2 + 2) / 4]                                                                                [LOADER] ✔ Successfully loaded 2947700 rows into iceberg.default.employees_4
+[2025-12-09T13:57:45.730+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'traffic_activity', 'raw_path': 's3a://raw/postgres/traffic_activity/', 'status': 'raw_written'}
+[2025-12-09T13:57:45.733+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/traffic_activity/
+[2025-12-09T13:57:45.927+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.traffic_activity
+[2025-12-09T13:57:46.680+0000] {subprocess.py:93} INFO - [LOADER] ✔ Successfully loaded 8 rows into iceberg.default.traffic_activity
+[2025-12-09T13:57:46.682+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'orders', 'raw_path': 's3a://raw/postgres/orders/', 'status': 'raw_written'}
+[2025-12-09T13:57:46.684+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/orders/
+[2025-12-09T13:57:47.033+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.orders
+[2025-12-09T13:57:47.723+0000] {subprocess.py:93} INFO - [LOADER] ✔ Successfully loaded 2 rows into iceberg.default.orders
+[2025-12-09T13:57:47.726+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'products', 'raw_path': 's3a://raw/postgres/products/', 'status': 'raw_written'}
+[2025-12-09T13:57:47.729+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/products/
+[2025-12-09T13:57:47.969+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.products
+[2025-12-09T13:57:48.641+0000] {subprocess.py:93} INFO - [LOADER] ✔ Successfully loaded 6 rows into iceberg.default.products
+[2025-12-09T13:57:48.646+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'users_demo', 'raw_path': 's3a://raw/postgres/users_demo/', 'status': 'raw_written'}
+[2025-12-09T13:57:48.647+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/users_demo/
+[2025-12-09T13:57:48.826+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.users_demo
+[2025-12-09T13:57:49.496+0000] {subprocess.py:93} INFO - [LOADER] ✔ Successfully loaded 4 rows into iceberg.default.users_demo
+[2025-12-09T13:57:49.501+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'synthetic_employees', 'raw_path': 's3a://raw/postgres/synthetic_employees/', 'status': 'raw_written'}
+[2025-12-09T13:57:49.502+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/synthetic_employees/
+[2025-12-09T13:57:49.737+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.synthetic_employees
+[2025-12-09T13:57:50.663+0000] {subprocess.py:93} INFO - [LOADER] ✔ Successfully loaded 51 rows into iceberg.default.synthetic_employees
+[2025-12-09T13:57:50.666+0000] {subprocess.py:93} INFO - 📩 Received message: {'source': 'postgres', 'table_name': 'employees_2', 'raw_path': 's3a://raw/postgres/employees_2/', 'status': 'raw_written'}
+[2025-12-09T13:57:50.667+0000] {subprocess.py:93} INFO - [LOADER] Reading raw parquet from: s3a://raw/postgres/employees_2/
+[2025-12-09T13:57:50.850+0000] {subprocess.py:93} INFO - [LOADER] Writing into Iceberg table: iceberg.default.employees_2
+[2025-12-09T13:57:51.744+0000] {subprocess.py:93} INFO - [LOADER] ✔ Successfully loaded 10000 rows into iceberg.default.employees_2
+[2025-12-09T14:04:13.945+0000] {local_task_job_runner.py:313} WARNING - State of this instance has been externally set to removed. Terminating instance.
+[2025-12-09T14:04:13.947+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
+[2025-12-09T14:04:13.950+0000] {process_utils.py:132} INFO - Sending 15 to group 57. PIDs of all processes in the group: [58, 57]
+[2025-12-09T14:04:13.951+0000] {process_utils.py:87} INFO - Sending the signal 15 to group 57
+[2025-12-09T14:04:13.952+0000] {taskinstance.py:2611} ERROR - Received SIGTERM. Terminating subprocesses.
+[2025-12-09T14:04:13.953+0000] {subprocess.py:104} INFO - Sending SIGTERM signal to process group
+[2025-12-09T14:04:13.954+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-09T14:04:14.004+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=58, status='terminated', started='13:57:03') (58) terminated with exit code None
+[2025-12-09T14:04:14.006+0000] {process_utils.py:80} INFO - Process psutil.Process(pid=57, status='terminated', exitcode=0, started='13:57:03') (57) terminated with exit code 0

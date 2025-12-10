@@ -1,0 +1,33 @@
+[2025-12-09T13:17:41.371+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2025-12-09T13:17:41.411+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: bronze_ingestion_pipeline.run_connector manual__2025-12-09T13:12:36.551707+00:00 [queued]>
+[2025-12-09T13:17:41.426+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: bronze_ingestion_pipeline.run_connector manual__2025-12-09T13:12:36.551707+00:00 [queued]>
+[2025-12-09T13:17:41.428+0000] {taskinstance.py:2306} INFO - Starting attempt 2 of 2
+[2025-12-09T13:17:41.447+0000] {taskinstance.py:2330} INFO - Executing <Task(BashOperator): run_connector> on 2025-12-09 13:12:36.551707+00:00
+[2025-12-09T13:17:41.454+0000] {standard_task_runner.py:64} INFO - Started process 56 to run task
+[2025-12-09T13:17:41.464+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'bronze_ingestion_pipeline', 'run_connector', 'manual__2025-12-09T13:12:36.551707+00:00', '--job-id', '4', '--raw', '--subdir', 'DAGS_FOLDER/ingestion_dag.py', '--cfg-path', '/tmp/tmp9p80mtql']
+[2025-12-09T13:17:41.468+0000] {standard_task_runner.py:91} INFO - Job 4: Subtask run_connector
+[2025-12-09T13:17:41.596+0000] {task_command.py:426} INFO - Running <TaskInstance: bronze_ingestion_pipeline.run_connector manual__2025-12-09T13:12:36.551707+00:00 [running]> on host b8a7058602eb
+[2025-12-09T13:17:41.741+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='bronze_ingestion_pipeline' AIRFLOW_CTX_TASK_ID='run_connector' AIRFLOW_CTX_EXECUTION_DATE='2025-12-09T13:12:36.551707+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-12-09T13:12:36.551707+00:00'
+[2025-12-09T13:17:41.745+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2025-12-09T13:17:41.774+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2025-12-09T13:17:41.776+0000] {subprocess.py:75} INFO - Running command: ['/usr/bin/bash', '-c', 'docker exec connector_service python3 /app/main.py']
+[2025-12-09T13:17:41.795+0000] {subprocess.py:86} INFO - Output:
+[2025-12-09T13:17:41.839+0000] {subprocess.py:93} INFO - Error response from daemon: container 34dc1155c756501281194876b319630ae02ad30b6f6858abd3344c7f807c3383 is not running
+[2025-12-09T13:17:41.842+0000] {subprocess.py:97} INFO - Command exited with return code 1
+[2025-12-09T13:17:41.844+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2025-12-09T13:17:41.864+0000] {taskinstance.py:2905} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/models/baseoperator.py", line 401, in wrapper
+    return func(self, *args, **kwargs)
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/operators/bash.py", line 243, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 1.
+[2025-12-09T13:17:41.870+0000] {taskinstance.py:1206} INFO - Marking task as FAILED. dag_id=bronze_ingestion_pipeline, task_id=run_connector, run_id=manual__2025-12-09T13:12:36.551707+00:00, execution_date=20251209T131236, start_date=20251209T131741, end_date=20251209T131741
+[2025-12-09T13:17:41.889+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 4 for task run_connector (Bash command failed. The command returned a non-zero exit code 1.; 56)
+[2025-12-09T13:17:41.921+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 1
+[2025-12-09T13:17:41.963+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-12-09T13:17:41.970+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
